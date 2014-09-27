@@ -44,8 +44,10 @@
   (try (create-index!)
        (catch Exception _)))
 
+(def date-fields [:created :updated :from :to])
+
 (defn- unparse-or-nothing
-  "Try to unparse date or do nothing"
+  "Try to unparse date or do nothing."
   [date]
   (when date
     (try (f/unparse date-formatter date)
@@ -55,7 +57,20 @@
   "Prepare task to put in index."
   [task]
   (reduce #(update-in %1 [%2] unparse-or-nothing) task
-          [:created :updated :from :to]))
+          date-fields))
+
+(defn- parse-or-nothing
+  "Try to parse date or do nothing."
+  [date]
+  (when date
+    (try (f/parse date-formatter date)
+         (catch Exception _ date))))
+
+(defn prepare-from-db
+  "Prepare task received from db."
+  [task]
+  (reduce #(update-in %1 [%2] parse-or-nothing) task
+          date-fields))
 
 (defn put-task!
   "Removes previous indexed task with same `task-id` and puts task in elastic index."
@@ -65,7 +80,7 @@
   (let [prepared (prepare-to-put task)
         {:keys [_id]} (esd/create @elastic (env :elastic-index)
                                   const/tasks-index prepared)]
-    (assoc prepared :_id _id)))
+    (prepare-from-db (assoc prepared :_id _id))))
 
 (defn ->sources
   "Get source documents from elastic search result."
@@ -73,7 +88,8 @@
   (->> result
        :hits
        :hits
-       (map :_source)))
+       (map :_source)
+       (map prepare-from-db)))
 
 (defn get-user-tasks
   "Get tasks for user."

@@ -49,12 +49,17 @@
           :done false
           :deleted false})))
 
+(deftest test-prepare-from-db
+  (let [task (make-task)]
+    (is (= (p/prepare-from-db (p/prepare-to-put task))
+           task))))
+
 (deftest test-put-task!
   (let [task (make-task)]
     (p/put-task! (make-task :done true))
     (p/put-task! task)
-    (Thread/sleep 1000) ; wait for elasticsearch
-    (is (= [(p/prepare-to-put task)]
+    (Thread/sleep 1000)                                     ; wait for elasticsearch
+    (is (= [task]
            (p/->sources (esd/search @p/elastic (env :elastic-index) const/tasks-index
                                     :filter (q/term :task-id (:task-id task))))))))
 
@@ -70,10 +75,10 @@
   (dotimes [x 1] (p/put-task! (make-task :done true
                                          :deleted true
                                          :task-id (str "id-5-" x))))
-  (Thread/sleep 1000) ; wait for elasticsearch
+  (Thread/sleep 1000)                                       ; wait for elasticsearch
   (is (= 5 (count (p/get-user-tasks "owner-id"))))
   (is (= 12 (count (p/get-user-tasks "owner-id"
-                                    :done true))))
+                                     :done true))))
   (is (= 1 (count (p/get-user-tasks "owner-id"
                                     :done true
                                     :deleted true)))))
