@@ -15,7 +15,7 @@
 (deftest test-update-task!
   (let [task (m/create-task! {:title "new task"})
         task-id (-> task :_id .toString)]
-    (is (= (dissoc (m/update-task! task-id {:description "description"}) :_id)
+    (is (= (dissoc (m/update-task! task-id {:description "description"}) :_id :created)
            {:data {:description "description"}
             :task-id task-id
             :type :update}))))
@@ -28,5 +28,6 @@
     (m/update-task! task-id {:description "updated description"})
     (is (= (m/get-task task-id)
            {:task-id task-id
+            :title "new task"
             :depend-on [12]
             :description "updated description"}))))
