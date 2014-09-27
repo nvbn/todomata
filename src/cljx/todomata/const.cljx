@@ -7,3 +7,5 @@
 (def landing-uri "/")
 
 (def logout-uri "/logout/")
+
+(def changes-collection "changes")
