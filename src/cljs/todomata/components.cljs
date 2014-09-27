@@ -1,22 +1,23 @@
 (ns todomata.components
   (:require [om.core :as om :include-macros true]
             [sablono.core :refer-macros [html]]
-            [om-tools.core :refer-macros [defcomponent]]))
+            [om-tools.core :refer-macros [defcomponent]]
+            [todomata.const :as const]))
 
-(defcomponent welcome-page
-  "Welcome page for non-authenticated users."
+(defcomponent header
+  "Component for page header"
   [_ _]
-  (display-name [_] "WelcomePage")
-  (render [_] (html [:h1 "Welcome to todomata!"])))
+  (display-name [_] "Header")
+  (render [_] (html [:div.container
+                     [:a.btn.btn-default.pull-right {:href const/logout-uri} "Logout"]
+                     [:h1 "TODOmata"]])))
 
 (defcomponent main
   "Main component."
   [app owner]
   (display-name [_] "Main")
   (render [_] (html [:div.container
-                     (if (:user app)
-                       [:h1 "Authenticated"]
-                       (om/build welcome-page app))])))
+                     (om/build header app)])))
 
 (defn init!
   [state]

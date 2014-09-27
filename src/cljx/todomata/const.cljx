@@ -5,3 +5,5 @@
 (def login-uri "/login/")
 
 (def landing-uri "/")
+
+(def logout-uri "/logout/")
