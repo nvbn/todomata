@@ -26,7 +26,7 @@
     (m/update-task! task-id {:description "description"
                              :depend-on [12]})
     (m/update-task! task-id {:description "updated description"})
-    (is (= (m/get-task task-id)
+    (is (= (dissoc (m/get-task task-id) :created :updated)
            {:task-id task-id
             :title "new task"
             :depend-on [12]

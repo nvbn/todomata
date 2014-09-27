@@ -62,8 +62,10 @@
   [task]
   (esd/delete-by-query @elastic (env :elastic-index)
                        const/tasks-index (q/term :task-id (:task-id task)))
-  (esd/create @elastic (env :elastic-index)
-              const/tasks-index (prepare-to-put task)))
+  (let [prepared (prepare-to-put task)
+        {:keys [_id]} (esd/create @elastic (env :elastic-index)
+                                  const/tasks-index prepared)]
+    (assoc prepared :_id _id)))
 
 (defn ->sources
   "Get source documents from elastic search result."

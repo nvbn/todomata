@@ -49,4 +49,6 @@
                                         :type :update}
                                :$orderby {:created 1}})
         task (reduce merge (:data original) (map :data changes))]
-    (assoc task :task-id task-id)))
+    (assoc task :task-id task-id
+                :created (:created original)
+                :updated (:created (or (last changes) original)))))
