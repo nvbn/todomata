@@ -10,7 +10,6 @@
 (defn create-task!
   "Create task, put in changes and update presentation."
   [data]
-  (let [{:keys [created task-data] :as task} (c/create-task! data)])
   (-> (c/create-task! data)
       c/get-task-id
       c/get-task
