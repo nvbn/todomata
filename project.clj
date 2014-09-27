@@ -26,7 +26,8 @@
                            [com.cemerick/friend "0.2.1"]
                            [friend-oauth2 "0.1.1"]
                            [com.novemberain/monger "2.0.0"]
-                           [clj-time "0.8.0"]]
+                           [clj-time "0.8.0"]
+                           [clojurewerkz/elastisch "2.1.0-beta7"]]
             :plugins [[lein-cljsbuild "1.0.3"]
                       [com.keminglabs/cljx "0.4.0"]
                       [lein-garden "0.2.1"]
@@ -57,7 +58,8 @@
                                    :github-client-id "a0eecaa258cd128cb7cb"
                                    :github-client-secret "f7da4dcd94e1250d5c5f9a61509abe90017fc9a8"
                                    :github-client-domain "http://localhost:3000"
-                                   :mongo-db "todomata_changes"}
+                                   :mongo-db "todomata_changes"
+                                   :elastic-index "todomata_index_2"}
                              :jvm-opts ["-Xss16m" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1"]}
                        :production {:aot :all
                                     :cljsbuild {:builds [{:source-paths ["src/cljs" "target/generated-cljs"]

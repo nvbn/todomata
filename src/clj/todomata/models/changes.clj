@@ -1,4 +1,4 @@
-(ns todomata.models
+(ns todomata.models.changes
   (:require [monger.core :as mg]
             [monger.collection :as mc]
             monger.joda-time
@@ -15,6 +15,11 @@
   []
   (reset! mongo (mg/connect))
   (reset! mongo-db (mg/get-db @mongo (env :mongo-db))))
+
+(defn get-task-id
+  "Get id of tas."
+  [task]
+  (-> task :_id .toString))
 
 (defn create-task!
   "Creates new task."
@@ -43,9 +48,5 @@
                               {:$query {:task-id task-id
                                         :type :update}
                                :$orderby {:created 1}})
-        task (loop [changes (map :data changes)
-                    task (:data original)]
-               (if (seq changes)
-                 (recur (rest changes) (merge task (first changes)))
-                 task))]
+        task (reduce merge (:data original) (map :data changes))]
     (assoc task :task-id task-id)))
