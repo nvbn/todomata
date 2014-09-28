@@ -4,11 +4,9 @@
             [todomata.models.presentation-test :as pt]
             [todomata.models.core :as m]))
 
-(use-fixtures :once ct/wrap-db)
+(def db-fixtures [ct/wrap-db ct/clear-db pt/wrap-db pt/clear-db])
 
-(use-fixtures :once pt/wrap-db)
-
-(use-fixtures :each pt/clear-db)
+(apply use-fixtures :each db-fixtures)
 
 (deftest test-create-task!
   (is (= (dissoc (m/create-task! {:description "about cats"
@@ -17,7 +15,9 @@
          {:description "about cats"
           :from nil
           :owner-id "owner"
-          :to nil})))
+          :to nil
+          :done false
+          :deleted false})))
 
 (deftest test-update-task!
   (let [{:keys [task-id]} (m/create-task! {:description "new about cats"
@@ -26,6 +26,8 @@
                    :_id :updated :created)
            {:to nil
             :from nil
+            :done false
+            :deleted false
             :task-id task-id
             :description "re: new"
             :owner-id "owner"}))))

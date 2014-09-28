@@ -18,9 +18,7 @@
                        const/tasks-index (q/match-all))
   (f))
 
-(use-fixtures :once wrap-db)
-
-(use-fixtures :each clear-db)
+(use-fixtures :each wrap-db clear-db)
 
 (defn- make-task
   [& params]

@@ -80,7 +80,7 @@
   (let [prepared (prepare-to-put task)
         {:keys [_id]} (esd/create @elastic (env :elastic-index)
                                   const/tasks-index prepared)]
-    (prepare-from-db (assoc prepared :_id _id))))
+    (prepare-from-db prepared)))
 
 (defn ->sources
   "Get source documents from elastic search result."
@@ -89,7 +89,8 @@
        :hits
        :hits
        (map :_source)
-       (map prepare-from-db)))
+       (map prepare-from-db)
+       (map #(dissoc % :_id))))
 
 (defn get-user-tasks
   "Get tasks for user."
@@ -102,5 +103,5 @@
       (swap! must conj (q/fuzzy-like-this :like-text query
                                           :fields [:description :location])))
     (->sources (esd/search @elastic (env :elastic-index) const/tasks-index
-                           :filter (q/bool :must @must)
+                           :query (q/bool :must @must)
                            :size const/result-size))))

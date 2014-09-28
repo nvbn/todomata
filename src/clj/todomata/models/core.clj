@@ -22,3 +22,5 @@
   (p/put-task! (c/get-task task-id)))
 
 (def get-user-tasks p/get-user-tasks)
+
+(def is-user-task? c/is-user-task?)

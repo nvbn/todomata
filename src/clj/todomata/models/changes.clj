@@ -27,7 +27,8 @@
   (mc/insert-and-return @mongo-db const/changes-collection
                         {:type :create
                          :created (now)
-                         :data data}))
+                         :data (assoc data :done false
+                                           :deleted false)}))
 
 (defn update-task!
   "Update exists task."
@@ -52,3 +53,13 @@
     (assoc task :task-id task-id
                 :created (:created original)
                 :updated (:created (or (last changes) original)))))
+
+(defn is-user-task?
+  "Is user owner of task?"
+  [task-id user-id]
+  (= user-id (some-> (try (mc/find-one-as-map @mongo-db const/changes-collection
+                                              {:_id (ObjectId. task-id)
+                                               :type :create})
+                          (catch IllegalArgumentException _ nil))
+                     :data
+                     :owner-id)))
